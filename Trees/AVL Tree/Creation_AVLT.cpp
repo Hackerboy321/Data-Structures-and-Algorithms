@@ -120,6 +120,116 @@ node* insertNode( node* root, int key)
             }
 }
 
+
+node* deleteNode( node* root , int target )
+{
+    // if the target node 
+        if(!root) return NULL ; // target node dose not exist 
+
+        else if( target < root->data)
+        {
+            root->left = deleteNode(root->left, target) ; 
+            
+        }
+
+        else if( target > root->data)
+        {
+            root->right = deleteNode(root->right , target) ; 
+           
+        }
+
+        else // the target node is found  so now check what kind of node it is 
+        {
+            // leaf node
+                if(root->left == NULL &&  root->right == NULL) 
+                {
+                    delete root ;
+                    return root ; 
+                }
+            // node having one child 
+                if(root->right == NULL) // means node has left child 
+                {
+                    node* temp = root->left ;
+                    delete root ; 
+                    return temp ; 
+                }
+
+                if(root->left == NULL ) // means node has right child 
+                {
+                    node* temp = root->right ;
+                    delete root ; 
+                    return temp ; 
+                }
+
+            // node having two child
+                else  // if nothing from above so it means it node having two child 
+                {
+                    node* parent = root ; 
+                    node* child = root->left ; 
+
+                    while(root->right == NULL) // find largest number in in left sub tree 
+                    {
+                        parent = child ;
+                        child = root->right ; 
+                    }
+
+
+                    if(root != parent )
+                    {
+                        parent->right = child->left ;
+                        child->left = root->left ; 
+                        child->right = root->right ;
+
+                        delete root ;
+                        return child ; 
+                    }
+
+                    else 
+                    {
+                        child->right = root->right ;
+                        delete root ; 
+                        return child ; 
+
+                    }
+                }
+
+            root->height = 1 + max(getHeight(root->left) , getHeight(root->right)) ; 
+            
+   
+
+            // check the type of unbalance 
+
+            // LL Unbalance
+                if(getBalanceFactor(root) > 1 && getBalanceFactor(root->left) > 0 ) 
+                {
+                    return rightRotation(root) ; 
+                }
+            // RR Unbalance
+                else if(getBalanceFactor(root) < -1 && getBalanceFactor(root->right) < 0) // the deleted node is leftNode  ;
+                {
+                    return leftRotation(root) ; 
+                }
+            // LR Unbalance
+                else if(getBalanceFactor(root) > 1 && getBalanceFactor(root->left)< 0 ) 
+                {
+                    root->left = leftRotation(root->left) ;  
+                    return rightRotation(root) ; 
+                }
+            // RL Unbalance
+                else if(getBalanceFactor(root) < -1 && getBalanceFactor(root->right) > 0) 
+                {
+                    root->right = rightRotation(root->right) ; 
+                    return leftRotation(root) ; 
+                }
+            // if there is no unbalancing 
+                else 
+                {
+                    return root ;
+                }
+            
+        }
+}
+
 // traversal 
 
 void preOrder(node* root)

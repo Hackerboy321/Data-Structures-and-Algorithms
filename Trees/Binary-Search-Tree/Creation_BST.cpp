@@ -115,7 +115,7 @@ public:
                     // if root == parent    
                         else
                         {
-                            child->right = root->right ; 
+                            child->right = parent->right ; 
                             delete root;
                             return child ;
                         }
